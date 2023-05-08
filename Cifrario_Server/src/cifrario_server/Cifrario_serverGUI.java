@@ -1,0 +1,864 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package cifrario_server;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+
+/**
+ * Classe che creal'interfaccia grafica del programma
+ * @author Andrea Del Corto-Simone Giacomelli 5IA07
+ */
+public class Cifrario_serverGUI extends javax.swing.JFrame {
+    protected Server inboxServer;
+    protected StylePanelMessages report;
+    protected final int MES_DECRIPT_COL = 4; 
+    protected final int MES_CRIPT_COL = 3; 
+    protected final int MES_VALID_COL = 5;      
+    public BruteForce bruteForce;
+    public SelectKey selectedKey;
+    private boolean userClosedBruteForce;
+    /**
+     * Costruttore della classe Calcio_serverGUI
+     */
+    public Cifrario_serverGUI() {
+        initComponents();
+        report = new StylePanelMessages(jTextPane_report);
+        //report.setDimH(16);
+        report.setFontH("Lucida Bright");
+        inboxServer= new Server(this);
+        ListSelectionModel selectionModel = jTable_messaggi.getSelectionModel();
+        jTable_messaggi.getColumnModel().getColumn(0).setPreferredWidth(80);
+        jTable_messaggi.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
+        jTable_messaggi.getModel().addTableModelListener(new TableModelListener() {
+                @Override
+                public void tableChanged(TableModelEvent e) {
+                    if (e.getType()==TableModelEvent.INSERT||e.getType()==TableModelEvent.DELETE || e.getType()==TableModelEvent.UPDATE) {
+                        autoResizeColum(jTable_messaggi);
+                    }
+                }
+            });
+        TableColumnModel columnModel = jTable_messaggi.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(150);columnModel.getColumn(0).setMinWidth(150);columnModel.getColumn(0).setMaxWidth(150);
+        columnModel.getColumn(1).setPreferredWidth(120);columnModel.getColumn(1).setMinWidth(120);columnModel.getColumn(1).setMaxWidth(120);
+        columnModel.getColumn(2).setPreferredWidth(50);columnModel.getColumn(2).setMinWidth(50);columnModel.getColumn(2).setMaxWidth(50);
+        columnModel.getColumn(3).setPreferredWidth(110);columnModel.getColumn(3).setMinWidth(115);columnModel.getColumn(3).setMaxWidth(115);
+        columnModel.getColumn(4).setPreferredWidth(130);columnModel.getColumn(4).setMinWidth(130);columnModel.getColumn(4).setMaxWidth(130);
+        columnModel.getColumn(5).setPreferredWidth(145);columnModel.getColumn(5).setMinWidth(145);columnModel.getColumn(5).setMaxWidth(145);
+        
+        importaMessaggiDaFile(jTable_messaggi,"cifrario_server/messaggi.txt");
+        
+        //selectionModel.setSelectionInterval(0, 0);        
+        //*********** TEST CRIPTAGGIO/DECRIPTAGGIO *********** 
+        String mes="0000: ciao";
+        System.out.println("Test is Valid mes:"+isValidDecodMes(mes));
+        String criptCesare=codificaCesare(mes,42342342);
+        String criptVigenère=codificaVigenere(mes,"abcde");
+        
+        String decriptCesare = decodificaCesare(criptCesare, 42342342);
+        String decriptVigenère = decodificaVigenere(criptVigenère, "abcde");
+        
+        System.out.println("Test criptaggio/decriptaggio con mes: "+mes+"\n");
+        
+        System.out.println("-Cesare criptato:"+criptCesare);
+        System.out.println("-Cesare decriptato:"+decriptCesare);
+        
+        System.out.println("-Vigenere criptato:"+criptVigenère);
+        System.out.println("-Vigenère decriptato:"+decriptVigenère);
+        
+         //System.out.println("Brute force vigenere:");bruteForceVigenere(decriptVigenère);System.out.println("Fine bruteforce");
+        //System.out.println("Chiavi possibili:"+Math.pow(('z'-'a'),5));
+        //System.out.println("Chiavi trovate: "+findKeyVigenère(criptVigenère));
+        
+    }
+
+    /**
+     * Questo metodo viene chiamato insieme al costruttore, inizializza tutti i componenti
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPopupMenu_mesOption = new javax.swing.JPopupMenu();
+        jMenuItem_decripta = new javax.swing.JMenuItem();
+        jMenuItem_mostraMesCifrato = new javax.swing.JMenuItem();
+        jMenuItem_mostraMesDecifrato = new javax.swing.JMenuItem();
+        jMenuItem_bruteForce = new javax.swing.JMenuItem();
+        jMenuItem_cancSelectedRow = new javax.swing.JMenuItem();
+        jPanel_serverManager = new javax.swing.JPanel();
+        jButton_start = new javax.swing.JButton();
+        jTextField_portaServer = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane_messaggi = new javax.swing.JScrollPane();
+        jTextPane_report = new javax.swing.JTextPane();
+        jLabel_serverIcon = new javax.swing.JLabel();
+        jScrollPane_tab = new javax.swing.JScrollPane();
+        jTable_messaggi = new javax.swing.JTable();
+        mainMenu = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
+        exitMenuItem = new javax.swing.JMenuItem();
+        helpMenu = new javax.swing.JMenu();
+        aboutMenuItem = new javax.swing.JMenuItem();
+        showDiagramMenuItem = new javax.swing.JMenuItem();
+
+        jMenuItem_decripta.setText("Decripta");
+        jMenuItem_decripta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_decriptaActionPerformed(evt);
+            }
+        });
+
+        jMenuItem_mostraMesCifrato.setText("Mostra messaggio cifrato");
+        jMenuItem_mostraMesCifrato.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_mostraMesCifratoActionPerformed(evt);
+            }
+        });
+
+        jMenuItem_mostraMesDecifrato.setText("Mostra messaggio decifrato");
+        jMenuItem_mostraMesDecifrato.setActionCommand("Mostra messaggio cifrato");
+        jMenuItem_mostraMesDecifrato.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_mostraMesDecifratoActionPerformed(evt);
+            }
+        });
+
+        jMenuItem_bruteForce.setText("Brute Force");
+        jMenuItem_bruteForce.setToolTipText("");
+        jMenuItem_bruteForce.setActionCommand("Mostra messaggio cifrato");
+        jMenuItem_bruteForce.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_bruteForceActionPerformed(evt);
+            }
+        });
+
+        jMenuItem_cancSelectedRow.setText("Cancella messaggi selezionati");
+        jMenuItem_cancSelectedRow.setToolTipText("");
+        jMenuItem_cancSelectedRow.setActionCommand("Mostra messaggio cifrato");
+        jMenuItem_cancSelectedRow.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_cancSelectedRowActionPerformed(evt);
+            }
+        });
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Secret Inbox");
+        setResizable(false);
+
+        jPanel_serverManager.setToolTipText("");
+
+        jButton_start.setText("Avvia");
+        jButton_start.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_startActionPerformed(evt);
+            }
+        });
+
+        jTextField_portaServer.setText("7777");
+
+        jLabel1.setFont(new java.awt.Font("DejaVu Serif", 0, 14)); // NOI18N
+        jLabel1.setText("Porta");
+
+        jScrollPane_messaggi.setBackground(new java.awt.Color(0, 0, 0));
+        jScrollPane_messaggi.setBorder(javax.swing.BorderFactory.createTitledBorder("Report"));
+        jScrollPane_messaggi.setMaximumSize(new java.awt.Dimension(355, 111));
+
+        jTextPane_report.setBackground(new java.awt.Color(0, 0, 0));
+        jScrollPane_messaggi.setViewportView(jTextPane_report);
+
+        jLabel_serverIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cifrario_server/serverOff.png"))); // NOI18N
+
+        jScrollPane_tab.setBackground(new java.awt.Color(204, 204, 204));
+        jScrollPane_tab.setBorder(javax.swing.BorderFactory.createTitledBorder("Messaggi ricevuti"));
+
+        jTable_messaggi.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Data", "IP", "Porta", "Messaggio cifrato", "Messaggio decifrato", "Decifrazione plausibile"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jTable_messaggi.setToolTipText("");
+        jTable_messaggi.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jTable_messaggi.setGridColor(new java.awt.Color(255, 153, 102));
+        jTable_messaggi.setSelectionBackground(new java.awt.Color(102, 204, 255));
+        jTable_messaggi.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        jTable_messaggi.setShowGrid(true);
+        jTable_messaggi.getTableHeader().setReorderingAllowed(false);
+        jTable_messaggi.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jTable_messaggiMouseReleased(evt);
+            }
+        });
+        jScrollPane_tab.setViewportView(jTable_messaggi);
+
+        javax.swing.GroupLayout jPanel_serverManagerLayout = new javax.swing.GroupLayout(jPanel_serverManager);
+        jPanel_serverManager.setLayout(jPanel_serverManagerLayout);
+        jPanel_serverManagerLayout.setHorizontalGroup(
+            jPanel_serverManagerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_serverManagerLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField_portaServer, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton_start)
+                .addGap(119, 119, 119)
+                .addComponent(jLabel_serverIcon)
+                .addGap(180, 180, 180))
+            .addGroup(jPanel_serverManagerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel_serverManagerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane_tab, javax.swing.GroupLayout.DEFAULT_SIZE, 740, Short.MAX_VALUE)
+                    .addComponent(jScrollPane_messaggi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel_serverManagerLayout.setVerticalGroup(
+            jPanel_serverManagerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_serverManagerLayout.createSequentialGroup()
+                .addGap(3, 3, 3)
+                .addGroup(jPanel_serverManagerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel_serverIcon)
+                    .addGroup(jPanel_serverManagerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton_start, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextField_portaServer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane_tab, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21)
+                .addComponent(jScrollPane_messaggi, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        fileMenu.setMnemonic('F');
+        fileMenu.setText("Menu");
+
+        exitMenuItem.setMnemonic('E');
+        exitMenuItem.setText("Esci");
+        exitMenuItem.setToolTipText("Esci dal programma");
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(exitMenuItem);
+
+        mainMenu.add(fileMenu);
+
+        helpMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cifrario_server/questionMark2.png"))); // NOI18N
+        helpMenu.setMnemonic('F');
+
+        aboutMenuItem.setMnemonic('A');
+        aboutMenuItem.setText("About");
+        aboutMenuItem.setToolTipText("About");
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(aboutMenuItem);
+
+        showDiagramMenuItem.setMnemonic('A');
+        showDiagramMenuItem.setText("Informazioni");
+        showDiagramMenuItem.setToolTipText("Informazioni sul funzionamento del sistema");
+        showDiagramMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showDiagramMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(showDiagramMenuItem);
+
+        mainMenu.add(helpMenu);
+
+        setJMenuBar(mainMenu);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel_serverManager, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 8, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel_serverManager, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    ArrayList<String> getMesDaDecriptare(JTable tab,int colMes){
+      ArrayList<String> app = new ArrayList<String>();
+      int[] selectedRows = jTable_messaggi.getSelectedRows();
+
+      for(int i=0;i<selectedRows.length;i++){//Aggiorno il campo dei messaggi decriptati di tutte le righe selezionate
+        app.add((String) jTable_messaggi.getValueAt(selectedRows[i],MES_CRIPT_COL));
+      }          
+
+        System.out.println("Messaggi da decriptare:"+app);
+      return app;
+    }
+    
+    private boolean isValidDecodMes(String mes){
+      return mes.substring(0,4).matches("^([0-9]){4}$") && mes.substring(4, 6).equals(": ");
+    }
+    
+    public void decriptaSelectedRowsCesare(int cesareKey){
+      ArrayList<String> daDecriptare = getMesDaDecriptare(jTable_messaggi,MES_DECRIPT_COL);
+      int[] selectedRows = jTable_messaggi.getSelectedRows();
+
+      for(int i=0;i<selectedRows.length;i++){//Aggiorno il campo dei messaggi decriptati di tutte le righe selezionate
+        String mesDecriptato = decodificaCesare(daDecriptare.get(i), cesareKey);
+        System.out.println("Mes decriptato x riga"+selectedRows[i]+" : "+mesDecriptato);
+        jTable_messaggi.setValueAt(mesDecriptato,selectedRows[i], MES_DECRIPT_COL);
+        if(isValidDecodMes(mesDecriptato)){//Se il messaggio criptato ha la possibilità di essere stato decifrato correttamnete
+           jTable_messaggi.setValueAt(Boolean.TRUE,selectedRows[i], MES_VALID_COL);
+        }
+        else{
+          jTable_messaggi.setValueAt(Boolean.FALSE,selectedRows[i], MES_VALID_COL);
+        }
+      }
+    }
+    
+    public void decriptaSelectedRowsVigenère(String vigenèreKey){
+      ArrayList<String> daDecriptare = getMesDaDecriptare(jTable_messaggi,MES_DECRIPT_COL);
+      int[] selectedRows = jTable_messaggi.getSelectedRows();
+
+      for(int i=0;i<selectedRows.length;i++){//Aggiorno il campo dei messaggi decriptati di tutte le righe selezionate
+          System.out.println("Decripto:"+daDecriptare.get(i));
+        String mesDecriptato = decodificaVigenere(daDecriptare.get(i), vigenèreKey);
+        System.out.println("Mes decriptato x riga"+selectedRows[i]+" : "+mesDecriptato);
+        jTable_messaggi.setValueAt(mesDecriptato,selectedRows[i], MES_DECRIPT_COL);
+        if(isValidDecodMes(mesDecriptato)){//Se il messaggio criptato ha la possibilità di essere stato decifrato correttamnete
+           jTable_messaggi.setValueAt(Boolean.TRUE,selectedRows[i], MES_VALID_COL);
+        }
+        else{
+          jTable_messaggi.setValueAt(Boolean.FALSE,selectedRows[i], MES_VALID_COL);
+        }
+      }    
+    }    
+    
+    private void jMenuItem_decriptaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_decriptaActionPerformed
+      new Decifra(this).setVisible(true);
+    }//GEN-LAST:event_jMenuItem_decriptaActionPerformed
+
+    private void jMenuItem_mostraMesCifratoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_mostraMesCifratoActionPerformed
+      int r = jTable_messaggi.getSelectedRow();
+      new ShowMes(this,(String) jTable_messaggi.getValueAt(r,MES_CRIPT_COL)).setVisible(true);
+    }//GEN-LAST:event_jMenuItem_mostraMesCifratoActionPerformed
+
+    private void jMenuItem_mostraMesDecifratoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_mostraMesDecifratoActionPerformed
+      int r = jTable_messaggi.getSelectedRow();
+      String mesDecriptato = (String) jTable_messaggi.getValueAt(r,MES_DECRIPT_COL);
+      if(!mesDecriptato.isEmpty())
+        new ShowMes(this,(String) jTable_messaggi.getValueAt(r,MES_DECRIPT_COL)).setVisible(true);
+      else
+       JOptionPane.showMessageDialog(this,"Messaggio non ancora decriptato.", "Impossibile visualizzare il messaggio", JOptionPane.ERROR_MESSAGE);   
+    }//GEN-LAST:event_jMenuItem_mostraMesDecifratoActionPerformed
+
+    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_exitMenuItemActionPerformed
+
+    private void jMenuItem_bruteForceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_bruteForceActionPerformed
+        // TODO add your handling code here:
+        userClosedBruteForce=false;
+        bruteForce = new BruteForce(this);
+        bruteForce.setVisible(true);
+        userClosedBruteForce=true;
+        System.out.println("DOPOOOO");
+    }//GEN-LAST:event_jMenuItem_bruteForceActionPerformed
+
+    private void jTable_messaggiMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_messaggiMouseReleased
+        //jTable_messaggi.rowAtPoint() Restituisce l'indice della
+        //riga della tabella, se evt.getPoint() restituisce un un
+        //punto che si trova su una riga, altrimenti ritorna -1.
+        int r = jTable_messaggi.rowAtPoint(evt.getPoint());
+        if (r >= 0 && r < jTable_messaggi.getRowCount()) {
+            System.out.println("Riga "+r+"selezionata.");
+            //jTable_messaggi.setRowSelectionInterval(r, r);
+            /*int rowindex = jTable_messaggi.getSelectedRow();
+            if (rowindex < 0)
+            return;*/
+            if(evt.getButton() == java.awt.event.MouseEvent.BUTTON3){//Click dx
+                System.out.println("Show option menu");
+                if(jTable_messaggi.getSelectedRowCount()<=1)jTable_messaggi.setRowSelectionInterval(r, r);
+                else{//CLICK DX con selezione multipla
+                    //Controllo se il click è avvenuto su una riga selezionata
+                    int[] selectedRows = jTable_messaggi.getSelectedRows();
+                    boolean onSelectedRow = false;
+                    for(int i=0;i<selectedRows.length;i++){
+                        if(selectedRows[i]==r){
+                            onSelectedRow=true;
+                            break;
+                        }
+                    }
+                    if(!onSelectedRow){//Click su riga NON appartenente alla selezione multipla
+                        jTable_messaggi.setRowSelectionInterval(r, r);
+                    }
+                }
+                jPopupMenu_mesOption.removeAll();
+                jPopupMenu_mesOption.add(jMenuItem_decripta);
+                jPopupMenu_mesOption.add(jMenuItem_bruteForce);
+                jPopupMenu_mesOption.add(jMenuItem_cancSelectedRow);
+                if(jTable_messaggi.getSelectedRowCount()==1){//Se è stata selezionata una sola riga
+                    //Visualizza anche le voci "Mostra messaggio cifrato" e "Mostra messaggio decifrato"
+                    jPopupMenu_mesOption.add(jMenuItem_mostraMesCifrato);
+                    jPopupMenu_mesOption.add(jMenuItem_mostraMesDecifrato);
+                }
+                jPopupMenu_mesOption.show(evt.getComponent(), evt.getX(), evt.getY());
+            }
+            else{
+                System.out.println("Click sx");
+                int selectedRow = jTable_messaggi.getSelectedRow();
+                if(((String)jTable_messaggi.getValueAt(r,MES_DECRIPT_COL)).isEmpty())
+                  jTable_messaggi.setValueAt(Boolean.FALSE,r,5);
+            }
+        }
+    }//GEN-LAST:event_jTable_messaggiMouseReleased
+
+    /**
+     * connette il server alla porta definita
+     * @param evt evento generato dalla pressione del bottone
+     */
+    private void jButton_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_startActionPerformed
+        int porta=0;
+        try {
+            porta = Integer.parseInt(jTextField_portaServer.getText());
+            if(inboxServer.turnOn(porta)){//Server attivo
+                report.appendMessage("Server attivo sulla porta "+porta+" !","", new Color(0, 128, 192), Color.yellow);
+                jTextField_portaServer.setEnabled(false);
+            }
+            else{
+                report.appendMessage("Impossibile attivare il server.\nVerifica che la porta "+porta+" non sia occupata da un'altra applicazione.","", Color.red, Color.yellow);
+            }
+        }
+        catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(this,"Porta inserita non valida.", "Errore inserimento valori", JOptionPane.ERROR_MESSAGE);
+        }
+        if(inboxServer.isOn()){
+            System.out.println("Server on");
+            //report.appendMessage("Server attivo sulla porta "+porta+" !","", new Color(0, 128, 192), Color.yellow);
+            jLabel_serverIcon.setIcon(new ImageIcon(getClass().getResource("/cifrario_server/serverOn.png")));
+            jButton_start.setEnabled(false);
+            //jButton_stop.setEnabled(true);
+        }
+        else{
+            System.out.println("Server off");
+            jLabel_serverIcon.setIcon(new ImageIcon(getClass().getResource("/cifrario_server/serverOff.png")));
+            jButton_start.setEnabled(true);
+            //jButton_stop.setEnabled(false);
+        }
+    }//GEN-LAST:event_jButton_startActionPerformed
+
+    private void jMenuItem_cancSelectedRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_cancSelectedRowActionPerformed
+        // TODO add your handling code here:
+        
+        if(jTable_messaggi.getSelectedRowCount()!=0){
+          int dialogResult = JOptionPane.showConfirmDialog (null, "Sei sicuro di volere proseguire?\nVerranno cancellati "+jTable_messaggi.getSelectedRowCount()+" messaggi","Attenzione",JOptionPane.YES_NO_OPTION);
+          if(dialogResult == JOptionPane.YES_OPTION){
+            DefaultTableModel model = (DefaultTableModel) jTable_messaggi.getModel();
+            
+            do{
+              int[] rows = jTable_messaggi.getSelectedRows();   
+              model.removeRow(rows[0]);
+            }while(jTable_messaggi.getSelectedRow()!=-1);
+          }
+        }
+    }//GEN-LAST:event_jMenuItem_cancSelectedRowActionPerformed
+
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+        // TODO add your handling code here:
+        new About(this).setVisible(true);
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
+
+    private void showDiagramMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showDiagramMenuItemActionPerformed
+        // TODO add your handling code here:
+        new ImageViewer(this,"diagrammaCifratura.png").setVisible(true);
+    }//GEN-LAST:event_showDiagramMenuItemActionPerformed
+
+    
+    private void importaMessaggiDaFile(JTable tab,String filePath){
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        InputStream stream = classLoader.getResourceAsStream(filePath);
+        if (stream != null) {
+          System.out.println("File found");
+            if(updateTabByFile(jTable_messaggi,stream)){
+              //JOptionPane.showMessageDialog(this,"Lettura del file completata.", "Informazione", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else{
+              JOptionPane.showMessageDialog(this,"Lettura storico dei messaggi fallita.", "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+          System.out.println("File not found");  
+          JOptionPane.showMessageDialog(this,"Impossibile trovare il file dei messaggi salvati.", "Informazione", JOptionPane.INFORMATION_MESSAGE);  
+        }
+    /*
+        if(updateTabByFile(jTable_messaggi,fileMessaggi)){
+          JOptionPane.showMessageDialog(this,"Lettura del file completata.", "Informazione", JOptionPane.INFORMATION_MESSAGE);
+        }
+        else{
+          JOptionPane.showMessageDialog(this,"Lettura del file fallita.", "Errore", JOptionPane.ERROR_MESSAGE);
+        }  */         
+        /*JFileChooser fileChooser = new JFileChooser();
+        //fileChooser.setCurrentDirectory(new File(getClass().getResource("/cifrario_server/MessaggiSalvati").g));
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            String pathFIle = selectedFile.getAbsolutePath();
+            String fileName = selectedFile.getName();
+                        System.out.println("Selected file name: " + fileName);
+            if(!fileName.isEmpty() && fileName.split("\\.")[1].equals("cripted")){//File valido
+              if(updateTabByFile(jTable_messaggi,selectedFile)){
+                JOptionPane.showMessageDialog(this,"Lettura del file completata.", "Informazione", JOptionPane.INFORMATION_MESSAGE);
+              }
+              else{
+                JOptionPane.showMessageDialog(this,"Lettura del file fallita.", "Errore", JOptionPane.ERROR_MESSAGE);
+              }
+            }
+            else{
+              JOptionPane.showMessageDialog(this,"File non valido.", "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        }*/      
+    }
+    
+    private boolean updateTabByFile(JTable tab,InputStream stream){
+      String line;
+
+      // try-with-resources
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+        DefaultTableModel model = (DefaultTableModel) tab.getModel();  
+        while ((line = reader.readLine()) != null && !line.isEmpty()) {
+            System.out.println(line);
+            String[] values = line.split("§");
+            String date = values[0];
+            String ip = values[1];
+            int porta = Integer.parseInt(values[2]);
+            String mesCifrato = values[3];
+            String mesDecifrato = values[4];
+            boolean plausibile = Boolean.parseBoolean(values[5]);
+
+            model.addRow(new Object[]{date,ip,porta,mesCifrato,mesDecifrato,plausibile});
+            System.out.println("Riga aggiunta");          
+        }
+        return true;
+      } catch (Exception ex) {
+          System.out.println("Impossibile legfgere il file");          
+          return false;
+      }
+  
+        
+        
+        
+        
+        
+        /*
+        FileReader fr = null;
+        //Leggo il file
+        BufferedReader br = null;
+
+        try {
+                String sCurrentLine;
+                ArrayList<String> allMes= new ArrayList<String>();
+                br = new BufferedReader(new FileReader(selectedFile));
+                tab.removeAll();
+                DefaultTableModel model = (DefaultTableModel) tab.getModel();
+                while ((sCurrentLine = br.readLine()) != null) {
+                    System.out.println(sCurrentLine);
+                    String[] values = sCurrentLine.split("§");
+                    String date = values[0];
+                    String ip = values[1];
+                    int porta = Integer.parseInt(values[2]);
+                    String mesCifrato = values[3];
+                    String mesDecifrato = values[4];
+                    boolean plausibile = Boolean.parseBoolean(values[5]);
+
+                    model.addRow(new Object[]{date,ip,porta,mesCifrato,mesDecifrato,plausibile});
+                    System.out.println("Riga aggiunta");
+                }
+        } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+        } finally {
+                try {
+                        if (br != null)br.close();
+                } catch (IOException ex) {
+                        ex.printStackTrace();
+                }
+           return true;
+        }*/
+    }
+    
+    private void autoResizeColum(JTable table){
+
+        for (int column = 0; column < table.getColumnCount(); column++){
+            TableColumn tableColumn = table.getColumnModel().getColumn(column);
+            int preferredWidth = tableColumn.getMinWidth();
+            int maxWidth = tableColumn.getMaxWidth();
+
+            for (int row = 0; row < table.getRowCount(); row++)
+            {
+                TableCellRenderer cellRenderer = table.getCellRenderer(row, column);
+                Component c = table.prepareRenderer(cellRenderer, row, column);
+                int width = c.getPreferredSize().width + table.getIntercellSpacing().width;
+                preferredWidth = Math.max(preferredWidth, width);
+
+                //  We've exceeded the maximum width, no need to check other rows
+
+                if (preferredWidth >= maxWidth)
+                {
+                    preferredWidth = maxWidth;
+                    break;
+                }
+            }
+
+            tableColumn.setPreferredWidth( preferredWidth );
+        }      
+    }
+    
+    //******************* METODI X CODIFICA/DECODIFICA *************************
+    
+    protected String decodificaVigenere(String daDecodificare, String chiave){
+        int i=0;
+        String decodificato="";
+        for(int j=0;j<daDecodificare.length();j++){//Scorro tt lettere messaggio da decriptare
+            char newCarat=(char) (daDecodificare.charAt(j)-chiave.charAt(i));
+            i=(i+1)%chiave.length();
+            decodificato+=newCarat;
+        }
+        return decodificato;
+    }
+    
+    protected String decodificaCesare(String daDecodificare, int chiave){
+        String decodificato="";
+        for(int i=0;i<daDecodificare.length();i++){//Scorro tt lettere messaggio da decriptare
+            char newCarat=(char) (daDecodificare.charAt(i)-chiave);
+            decodificato+=newCarat;
+        }
+        return decodificato;
+    }
+    
+    
+    protected String codificaVigenere(String daCodificare, String chiave){
+        int j=0; 
+        String criptato="";
+        for(int i=0;i<daCodificare.length();i++){//Scorro tt lettere messaggio da criptare
+            char newCarat=(char) (daCodificare.charAt(i)+chiave.charAt(j));
+            j=(j+1)%chiave.length();//se l'indice sfora la lunghezza della chiave, riparte dall'inizio
+            criptato+=newCarat;
+        }
+        return criptato;
+    }       
+    
+    protected String codificaCesare(String daCodificare, int chiave){
+        String criptato="";
+        for(int i=0;i<daCodificare.length();i++){//Scorro tt lettere messaggio da criptare
+            char newCarat=(char) (daCodificare.charAt(i)+chiave);
+            criptato+=newCarat;
+        }
+        return criptato;
+    }
+ 
+    public int findKeyCesare(String mes){
+      return mes.charAt(4)-':';
+    }
+
+    
+    public String findKeyVigenère(String mesCriptato){
+        //Trovo tutte le combinazioni di chiavi possibili
+        ArrayList<String> chiaviTrovate = new ArrayList<String>();
+        ArrayList<String> mesDecriptati = new ArrayList<String>();
+        for(char x1='a';x1<'z' && !userClosedBruteForce;x1++){
+          for(char x2='a';x2<'z' && !userClosedBruteForce;x2++){
+            for(char x3='a';x3<'z' && !userClosedBruteForce;x3++){
+              for(char x4='a';x4<'z' && !userClosedBruteForce;x4++){
+                  for(char x5='a';x5<'z' && !userClosedBruteForce;x5++){
+                    String chiaveCandidata = String.valueOf(x1)+String.valueOf(x2)+String.valueOf(x3)+String.valueOf(x4)+String.valueOf(x5);
+                    String mesDecriptato = decodificaVigenere(mesCriptato,chiaveCandidata);
+                    if(isValidDecodMes(mesDecriptato)){
+                      System.out.println("Possibile decriptazione riuscita ("+chiaveCandidata+"):"+mesDecriptato );
+                      chiaviTrovate.add(chiaveCandidata);
+                      mesDecriptati.add(mesDecriptato);
+                    }
+                  }
+              }
+            }  
+          }
+        }
+        //Scelta della chiave da parte dell'utente
+        if(!userClosedBruteForce){
+          selectedKey = new SelectKey(this, chiaviTrovate,mesDecriptati);
+          selectedKey.setVisible(true);
+          return selectedKey.key;
+        }
+        return "";
+    }    
+    
+    public void  bruteForceCesare(){
+      ArrayList<String> daDecriptare = getMesDaDecriptare(jTable_messaggi,MES_DECRIPT_COL);
+      int[] selectedRows = jTable_messaggi.getSelectedRows();
+
+      for(int i=0;i<selectedRows.length;i++){//Aggiorno il campo dei messaggi decriptati di tutte le righe selezionate
+        if(!userClosedBruteForce){
+            int key = findKeyCesare(daDecriptare.get(i));
+            System.out.println("Chiave trovata, cesare: "+key);
+            String mesDecriptato = decodificaCesare(daDecriptare.get(i), key);
+            //System.out.println("Mes decriptato x riga"+selectedRows[i]+" : "+mesDecriptato);
+            jTable_messaggi.setValueAt(mesDecriptato,selectedRows[i], MES_DECRIPT_COL);
+            if(isValidDecodMes(mesDecriptato)){//Se il messaggio criptato ha la possibilità di essere stato decifrato correttamnete
+               jTable_messaggi.setValueAt(Boolean.TRUE,selectedRows[i], MES_VALID_COL);
+            }
+            else{
+              jTable_messaggi.setValueAt(Boolean.FALSE,selectedRows[i], MES_VALID_COL);
+            }
+        }
+        else{//L'utente ha interroto la procedura di bruteforce
+          JOptionPane.showMessageDialog(this,"BruteForce di Cesare interrotto.", "Informazione", JOptionPane.INFORMATION_MESSAGE);
+          break;
+        }
+      }      
+      if(!userClosedBruteForce)JOptionPane.showMessageDialog(this,"BruteForce di Cesare completato", "Informazione", JOptionPane.INFORMATION_MESSAGE);
+        System.out.println("Fine brute force cesare");
+    }
+    
+    
+    
+    public void bruteForceVigenère(){
+      ArrayList<String> daDecriptare = getMesDaDecriptare(jTable_messaggi,MES_DECRIPT_COL);
+      int[] selectedRows = jTable_messaggi.getSelectedRows();
+
+      for(int i=0;i<selectedRows.length;i++){//Aggiorno il campo dei messaggi decriptati di tutte le righe selezionate
+        if(!userClosedBruteForce){
+            String key = findKeyVigenère(daDecriptare.get(i));
+            if(!key.isEmpty()){//Utente non ha scelto nessuna chiave per questo messaggio.
+                System.out.println("Chiave scelta, vigenere: "+key);
+                String mesDecriptato = decodificaVigenere(daDecriptare.get(i), key);
+                //System.out.println("Mes decriptato x riga"+selectedRows[i]+" : "+mesDecriptato);
+                jTable_messaggi.setValueAt(mesDecriptato,selectedRows[i], MES_DECRIPT_COL);
+                if(isValidDecodMes(mesDecriptato)){//Se il messaggio criptato ha la possibilità di essere stato decifrato correttamnete
+                   jTable_messaggi.setValueAt(Boolean.TRUE,selectedRows[i], MES_VALID_COL);
+                }
+                else{
+                  jTable_messaggi.setValueAt(Boolean.FALSE,selectedRows[i], MES_VALID_COL);
+                }
+            }
+        }
+        else{//L'utente ha interroto la procedura di bruteforce
+          JOptionPane.showMessageDialog(this,"BruteForce di Vigenère interrotto.", "Informazione", JOptionPane.INFORMATION_MESSAGE);
+          break;
+        }        
+      }
+      if(!userClosedBruteForce)JOptionPane.showMessageDialog(this,"BruteForce di Vigenère completato.", "Informazione", JOptionPane.INFORMATION_MESSAGE);
+        System.out.println("FINE brute force Vigenère");
+    } 
+    
+    
+    
+    /**
+     * metodo che fa eseguire il programma
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Cifrario_serverGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Cifrario_serverGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Cifrario_serverGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Cifrario_serverGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Cifrario_serverGUI().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JMenuItem exitMenuItem;
+    private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenu helpMenu;
+    private javax.swing.JButton jButton_start;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel_serverIcon;
+    private javax.swing.JMenuItem jMenuItem_bruteForce;
+    private javax.swing.JMenuItem jMenuItem_cancSelectedRow;
+    private javax.swing.JMenuItem jMenuItem_decripta;
+    private javax.swing.JMenuItem jMenuItem_mostraMesCifrato;
+    private javax.swing.JMenuItem jMenuItem_mostraMesDecifrato;
+    private javax.swing.JPanel jPanel_serverManager;
+    private javax.swing.JPopupMenu jPopupMenu_mesOption;
+    private javax.swing.JScrollPane jScrollPane_messaggi;
+    private javax.swing.JScrollPane jScrollPane_tab;
+    public javax.swing.JTable jTable_messaggi;
+    private javax.swing.JTextField jTextField_portaServer;
+    private javax.swing.JTextPane jTextPane_report;
+    private javax.swing.JMenuBar mainMenu;
+    private javax.swing.JMenuItem showDiagramMenuItem;
+    // End of variables declaration//GEN-END:variables
+}
